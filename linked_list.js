@@ -99,49 +99,92 @@ function redraw(d) {
 function add_node(idx, val, cd)
 {
 	console.log("add node at " + idx + " with val " + val);
+	console.log("cd : " + cd);
 	
 	var nodes = svg.selectAll(".node");
 	var texts = svg.selectAll(".text");
 	var arrows = svg.selectAll(".arrow");
 	
-	// 1단계 : 추가될 곳의 오른쪽에 있는 node들을 한 칸씩 밀기
-	nodes.transition().duration(duration)
-		.attr("x", function(d, i) { 
-			if (i >= idx) 	return (i + 1) * 80;
-			else			return i * 80;
-		});
+	if (cd.length - 1 === idx) {	// 맨 뒤. arrow, node 추가
+		console.log("nodes : " + nodes);
+		nodes = nodes.data(cd)
+			.enter().append("rect")
+			.attr("class", "node")
+			.attr("x", function(d, i) { return i * 80; })
+			.attr("y", 0)
+			.attr("width", 30)
+			.attr("height", 30)
+			.style("opacity", function(d, i) { return i === idx ? 0 : 1; });
 		
-	texts.transition().duration(duration)
-		.attr("x", function(d, i) { 
-			if (i >= idx) 	return (i + 1) * 80 + 15; 
-			else 			return i * 80 + 15;
-		});
+		texts = texts.data(cd)
+			.enter().append("text")
+			.attr("class", "text")
+			.attr("x", function(d, i) { return i * 80 + 15; })
+			.attr("y", 20)
+			.attr("text-anchor", "middle")
+			.text(function(d) { return d; })
+			.style("opacity", function(d, i) { return i === idx ? 0 : 1; });
 		
-	arrows.transition().duration(duration)
-		.attr("transform", function(d, i) { 
-			if (i >= idx - 1) 	return "translate(" + ((i+1) * 80) + ",15)";
-			else			return "translate(" + (i * 80) + ",15)";
-		});
+		arrows = arrows.data(cd.slice(0, -1))
+			.enter().append("path")
+			.attr("class", "arrow")
+			.attr("transform", function(d, i) { return "translate(" + (i * 80) + ",15)" })
+			.attr("d", "M40,0 L70,0")
+			.style("marker-end", "url(#arrow)")
+			.style("stroke", "black")
+			.style("stroke-width", "3px")
+			.style("opacity", function(d, i) { return i === idx - 1 ? 0 : 1; });
 		
-	svg.data([val]).enter().append("rect")
-		.attr("class", "node")
-		.attr("x", function(d, i) { return idx * 80; })
-		.attr("y", 0)
-		.attr("width", 30)
-		.attr("height", 30);
+		
+		nodes.transition().duration(duration)
+			.style("opacity", 1);
+		texts.transition().duration(duration)
+			.style("opacity", 1);
+		arrows.transition().duration(duration)
+			.style("opacity", 1);
+	}
+	else {	// node, arrow 추가
+		
+	}
 	
-	// 2단계 : node와 arrow 추가
-	nodes.filter(function(d, i) { return i === idx; })
-		.transition().duration(duration).delay(delay)
-		.style("opacity", 1);
-		
-	texts.filter(function(d, i) { return i === idx; })
-		.transition().duration(duration).delay(delay)
-		.style("opacity", 1);
-		
-	arrows.filter(function(d, i) { return i === idx - 1; })
-		.transition().duration(duration).delay(delay)
-		.style("opacity", 1);
+	// 1단계 : 추가될 곳의 오른쪽에 있는 node들을 한 칸씩 밀기
+	//nodes.transition().duration(duration)
+	//	.attr("x", function(d, i) { 
+	//		if (i >= idx) 	return (i + 1) * 80;
+	//		else			return i * 80;
+	//	});
+	//	
+	//texts.transition().duration(duration)
+	//	.attr("x", function(d, i) { 
+	//		if (i >= idx) 	return (i + 1) * 80 + 15; 
+	//		else 			return i * 80 + 15;
+	//	});
+	//	
+	//arrows.transition().duration(duration)
+	//	.attr("transform", function(d, i) { 
+	//		if (i >= idx - 1) 	return "translate(" + ((i+1) * 80) + ",15)";
+	//		else			return "translate(" + (i * 80) + ",15)";
+	//	});
+	//	
+	//svg.data([val]).enter().append("rect")
+	//	.attr("class", "node")
+	//	.attr("x", function(d, i) { return idx * 80; })
+	//	.attr("y", 0)
+	//	.attr("width", 30)
+	//	.attr("height", 30);
+	//
+	//// 2단계 : node와 arrow 추가
+	//nodes.filter(function(d, i) { return i === idx; })
+	//	.transition().duration(duration).delay(delay)
+	//	.style("opacity", 1);
+	//	
+	//texts.filter(function(d, i) { return i === idx; })
+	//	.transition().duration(duration).delay(delay)
+	//	.style("opacity", 1);
+	//	
+	//arrows.filter(function(d, i) { return i === idx - 1; })
+	//	.transition().duration(duration).delay(delay)
+	//	.style("opacity", 1);
 	
 	// 3단계 : redraw
 	
@@ -155,6 +198,12 @@ function delete_node(idx, cd)
 	var texts = svg.selectAll(".text");
 	var arrows = svg.selectAll(".arrow");
 	
+	if (cd.length === idx) {	// 맨 뒤. arrow, node 삭제
+		
+	}
+	else {	// node, arrow 삭제
+		
+	}
 	
 	// 1단계 : node와 arrow 사라짐
 	nodes.filter(function(d, i) { return i === idx; })
